@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Car Price Predictor</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 13px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            background: #e8f5e9;
+            color: #1b5e20;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .error {
+            margin-top: 25px;
+            padding: 15px;
+            background: #ffebee;
+            color: #b71c1c;
+            border-radius: 6px;
+            word-break: break-word;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Car Price Predictor</h1>
+
+    <form action="/predict" method="POST">
+
+        <!-- Company -->
+        <label for="company">Select Company</label>
+
+        <select name="company" id="company" required>
+
+            <option value="">Select Company</option>
+
+            {% for company in companies %}
+
+                <option value="{{ company }}">
+                    {{ company }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <!-- Car Model -->
+        <label for="car_model">Select Car Model</label>
+
+        <select name="car_model" id="car_model" required>
+
+            <option value="">Select Car Model</option>
+
+            {% for model in car_models %}
+
+                <option value="{{ model }}">
+                    {{ model }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <!-- Year -->
+        <label for="year">Select Year</label>
+
+        <select name="year" id="year" required>
+
+            <option value="">Select Year</option>
+
+            {% for year in years %}
+
+                <option value="{{ year }}">
+                    {{ year }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <!-- Fuel Type -->
+        <label for="fuel_type">Select Fuel Type</label>
+
+        <select name="fuel_type" id="fuel_type" required>
+
+            <option value="">Select Fuel Type</option>
+
+            {% for fuel in fuel_types %}
+
+                <option value="{{ fuel }}">
+                    {{ fuel }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <!-- KMs Driven -->
+        <label for="kms_driven">KMs Driven</label>
+
+        <input
+            type="number"
+            name="kms_driven"
+            id="kms_driven"
+            placeholder="Enter KMs Driven"
+            min="0"
+            required
+        >
+
+
+        <!-- Predict Button -->
+        <button type="submit">
+            Predict Price
+        </button>
+
+    </form>
+
+
+    <!-- Prediction Result -->
+
+    {% if prediction is not none %}
+
+        {% if prediction is number %}
+
+            <div class="result">
+                Predicted Car Price: ₹ {{ prediction }}
+            </div>
+
+        {% else %}
+
+            <div class="error">
+                {{ prediction }}
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+    const companyModels = {{ company_models | tojson }};
+
+    const companySelect = document.getElementById("company");
+
+    const modelSelect = document.getElementById("car_model");
+
+
+    companySelect.addEventListener("change", function () {
+
+        const selectedCompany = this.value;
+
+        modelSelect.innerHTML =
+            '<option value="">Select Car Model</option>';
+
+
+        if (companyModels[selectedCompany]) {
+
+            companyModels[selectedCompany].forEach(function (model) {
+
+                const option = document.createElement("option");
+
+                option.value = model;
+
+                option.textContent = model;
+
+                modelSelect.appendChild(option);
+
+            });
+
+        }
+
+    });
+
+</script>
+
+</body>
+
+</html>
